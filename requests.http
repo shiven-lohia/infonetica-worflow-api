@@ -1,0 +1,43 @@
+# ✅ Create Workflow Definition with Created → Processing → Completed states
+POST http://localhost:5041/workflows
+Content-Type: application/json
+
+{
+  "id": "order_process_v2",
+  "states": [
+    { "id": "created", "isInitial": true, "isFinal": false, "enabled": true },
+    { "id": "processing", "isInitial": false, "isFinal": false, "enabled": true },
+    { "id": "completed", "isInitial": false, "isFinal": true, "enabled": true }
+  ],
+  "actions": [
+    { "id": "start_processing", "fromStates": ["created"], "toState": "processing", "enabled": true },
+    { "id": "complete", "fromStates": ["processing"], "toState": "completed", "enabled": true }
+  ]
+}
+
+###
+
+# ✅ List All Workflow Definitions
+GET http://localhost:5041/workflows
+
+###
+
+# ✅ Create a New Workflow Instance (starts in 'created' state)
+POST http://localhost:5041/instances/order_process_v2
+
+# Copy the returned instance ID from the response for the next requests
+
+###
+
+# ✅ Check Current State of the Instance (replace instance ID below)
+GET http://localhost:5041/instances/{instanceId}
+
+###
+
+# ✅ Execute Action: Move from 'created' → 'processing' (replace instance ID below)
+POST http://localhost:5041/instances/{instanceId}/actions/start_processing
+
+###
+
+# ✅ Execute Action: Move from 'processing' → 'completed' (replace instance ID below)
+POST http://localhost:5041/instances/{instanceId}/actions/complete
